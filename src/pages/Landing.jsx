@@ -68,9 +68,10 @@ function DropCreator({ user }) {
 
       // 3. Upload each stem
       for (let i = 0; i < files.length; i++) {
-        setProgress(`Uploading ${i + 1}/${files.length} stems...`)
+        setProgress(`Uploading stem ${i + 1} of ${files.length}`)
         await uploadStem(files[i], project.id, commit.id)
       }
+      setProgress('Finalizing...')
 
       navigate(`/project/${project.id}`)
     } catch (err) {
@@ -150,9 +151,22 @@ function DropCreator({ user }) {
           </div>
 
           {/* Progress */}
-          {progress && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--blue)', borderLeft: '2px solid var(--blue)', paddingLeft: '12px' }}>
-              {progress}
+          {submitting && (
+            <div style={{ border: '2px solid var(--black)', padding: '16px', background: '#fff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '8px' }}>
+                <span>{progress || 'Creating project...'}</span>
+                <span>{files.length > 0 ? `${Math.min(files.length, Math.max(0, parseInt(progress) || 0))}/${files.length}` : ''}</span>
+              </div>
+              <div style={{ height: '6px', background: 'var(--gray)', border: '1px solid var(--black)' }}>
+                <div style={{
+                  height: '100%',
+                  background: 'var(--blue)',
+                  transition: 'width 0.3s ease',
+                  width: progress
+                    ? `${Math.round(((parseInt(progress.match(/\d+/) || [0])[0]) / files.length) * 100)}%`
+                    : '8%'
+                }} />
+              </div>
             </div>
           )}
 
@@ -211,31 +225,69 @@ function HeroLogin() {
 
   return (
     <div>
-      {/* Hero */}
-      <div style={{ borderBottom: '2px solid var(--black)', paddingBottom: '56px', marginBottom: '56px' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', color: 'var(--gray-mid)', marginBottom: '24px' }}>
-          Version Control for Music Producers
+      {/* ── Hero ── */}
+      <div style={{ borderBottom: '2px solid var(--black)', paddingBottom: '64px', marginBottom: '56px' }}>
+
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '4px', color: 'var(--gray-mid)', marginBottom: '20px' }}>
+          For Independent Producers
         </div>
 
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(72px, 12vw, 140px)', lineHeight: 0.88, letterSpacing: '2px', marginBottom: '36px' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(72px, 12vw, 140px)', lineHeight: 0.88, letterSpacing: '2px', marginBottom: '20px' }}>
           DEADW<span style={{ color: 'var(--blue)' }}>★</span>X
         </h1>
 
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', maxWidth: '560px', lineHeight: 1.75, marginBottom: '48px', color: 'var(--black)' }}>
-          The silent groove at the end of a record — where producers leave their mark.
+        {/* Secondary headline */}
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 3.5vw, 36px)', letterSpacing: '2px', lineHeight: 1.05, marginBottom: '40px' }}>
+          YOUR STEMS.{' '}
+          <span style={{ color: 'var(--blue)' }}>YOUR CREDIT.</span>
+          <br />
+          ON RECORD — FOREVER.
+        </div>
+
+        {/* Problem statement */}
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', maxWidth: '600px', lineHeight: 1.8, marginBottom: '40px', color: 'var(--black)' }}>
+          The beat drops. The collab claims it. You have nothing but a DM thread and a{' '}
+          <span style={{ background: 'var(--black)', color: 'var(--cream)', padding: '1px 6px' }}>final_FINAL_v3.wav</span>
+          {' '}nobody can trace back to you.
           <br /><br />
-          Deadwax is GitHub for beats. Commit versions, branch ideas, collaborate, and
-          own every contribution on record. No more{' '}
-          <span style={{ background: 'var(--black)', color: 'var(--cream)', padding: '1px 6px', fontFamily: 'var(--font-mono)' }}>final_FINAL_v3.wav</span>{' '}
-          ever again.
+          Independent producers lose credit, get locked into expensive platforms, and have no
+          proof of who built what — or when. Deadwax fixes that.
+          Open, accessible, and built so your creative work is yours from the first drop.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', border: '2px solid var(--black)', marginBottom: '48px', background: '#fff' }}>
+        {/* Manifesto bar */}
+        <div style={{ background: 'var(--black)', color: 'var(--cream)', padding: '20px 28px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', border: '2px solid var(--black)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(18px, 2.5vw, 26px)', letterSpacing: '2px', lineHeight: 1 }}>
+            BUILT FOR PRODUCERS. NOT PLATFORMS.
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', whiteSpace: 'nowrap' }}>
+            Free · Open · Yours
+          </span>
+        </div>
+
+        {/* Features grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', border: '2px solid var(--black)', marginBottom: '24px' }}>
           {[
-            { num: '01', label: 'Commit History', desc: 'Every version saved, every stem tracked' },
-            { num: '02', label: 'Branch Beats', desc: 'Fork a direction without losing the original' },
-            { num: '03', label: 'Invite Collabs', desc: 'Share a link — they push stems directly' },
-            { num: '04', label: 'Ownership Log', desc: 'Immutable proof of who built what and when' },
+            {
+              num: '01',
+              label: 'Tamper-Proof Commits',
+              desc: 'Every version timestamped and attributed. No one rewrites history.',
+            },
+            {
+              num: '02',
+              label: 'Fork Without Fear',
+              desc: "Your direction stays yours. Branch into new ideas — the original is locked.",
+            },
+            {
+              num: '03',
+              label: 'No Account Walls',
+              desc: 'One invite link. Any device. Every collaborator on record the second they join.',
+            },
+            {
+              num: '04',
+              label: 'Receipts Forever',
+              desc: 'Immutable ownership log. Every upload, every commit, who and exactly when.',
+            },
           ].map((f, i) => (
             <div
               key={f.label}
@@ -246,18 +298,45 @@ function HeroLogin() {
               }}
             >
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>{f.num}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '20px', letterSpacing: '1px', marginBottom: '6px' }}>{f.label}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', lineHeight: 1.5 }}>{f.desc}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', letterSpacing: '1px', marginBottom: '8px', lineHeight: 1.05 }}>{f.label}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', lineHeight: 1.6 }}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Security strip */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', border: '2px solid var(--black)', borderTop: 'none' }}>
+          {[
+            { icon: '◈', label: 'Magic link auth', sub: 'No passwords. No friction.' },
+            { icon: '◎', label: 'Signed storage URLs', sub: 'Files never publicly exposed.' },
+            { icon: '◉', label: 'Immutable event log', sub: 'Cannot be edited or deleted.' },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              style={{
+                padding: '14px 20px',
+                borderRight: i < 2 ? '2px solid var(--black)' : 'none',
+                display: 'flex', alignItems: 'center', gap: '12px',
+                background: '#fff',
+              }}
+            >
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'var(--blue)', flexShrink: 0 }}>{s.icon}</span>
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--black)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', marginTop: '2px' }}>{s.sub}</div>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Auth */}
+      {/* ── Auth ── */}
       <div style={{ maxWidth: '480px' }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: '32px', letterSpacing: '2px', marginBottom: '6px' }}>GET ACCESS</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: '36px', letterSpacing: '2px', marginBottom: '6px' }}>
+          GET ACCESS
+        </div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '20px' }}>
-          No password. Just a magic link.
+          No password. No subscription. Just a magic link.
         </div>
         <form
           onSubmit={handleLogin}

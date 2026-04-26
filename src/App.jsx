@@ -4,10 +4,12 @@ import { PageWrapper } from './components/layout/PageWrapper'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { Commit } from './pages/Commit'
 import { Dashboard } from './pages/Dashboard'
+import { Explore } from './pages/Explore'
 import { Invite } from './pages/Invite'
 import { Landing } from './pages/Landing'
 import { Log } from './pages/Log'
 import { NewProject } from './pages/NewProject'
+import { Profile } from './pages/Profile'
 import { Project } from './pages/Project'
 
 function ProtectedRoute({ children }) {
@@ -29,6 +31,8 @@ export default function App() {
         <PageWrapper>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/new" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><Project /></ProtectedRoute>} />

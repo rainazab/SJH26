@@ -109,7 +109,21 @@ export function Project() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-            <Button variant="secondary" onClick={copyInviteLink}>{copyStatus || '⬡ Invite'}</Button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+              <Button variant="blue" onClick={copyInviteLink}>
+                {copyStatus || '⬡ Copy Invite Link'}
+              </Button>
+              {!copyStatus && (
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Share link → collab joins → drops stems
+                </div>
+              )}
+              {copyStatus && (
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  ✓ Paste it in your group chat
+                </div>
+              )}
+            </div>
             <Button variant="secondary" onClick={() => { setBranchName(''); setBranchOpen(true) }}>⑂ Branch</Button>
             <Link to={`/project/${id}/commit`}><Button variant="blue">+ Commit</Button></Link>
             <Link to={`/project/${id}/log`}><Button variant="secondary">Log</Button></Link>

@@ -50,6 +50,12 @@ export function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
             {user ? (
               <>
+                <Link to="/explore" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
+                  Explore
+                </Link>
+                <Link to="/profile" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
+                  Profile
+                </Link>
                 <Link to="/dashboard" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
                   Dashboard
                 </Link>
