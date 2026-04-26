@@ -14,11 +14,11 @@ export function CommitTimeline({ commits, selectedCommitId, onSelectCommit }) {
       </div>
       {commits.map((commit, i) => {
         const selected = selectedCommitId === commit.id
+        const author = commit.profile?.display_name || commit.profile?.username || 'unknown'
         return (
           <button
             key={commit.id}
             onClick={() => onSelectCommit(commit.id)}
-            title={new Date(commit.created_at).toLocaleString()}
             style={{
               background: selected ? 'var(--black)' : 'transparent',
               color: selected ? 'var(--cream)' : 'var(--black)',
@@ -34,14 +34,19 @@ export function CommitTimeline({ commits, selectedCommitId, onSelectCommit }) {
             onMouseEnter={(e) => { if (!selected) e.currentTarget.style.background = 'rgba(26,86,255,0.06)' }}
             onMouseLeave={(e) => { if (!selected) e.currentTarget.style.background = 'transparent' }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '3px', wordBreak: 'break-word', lineHeight: 1.4 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '4px', wordBreak: 'break-word', lineHeight: 1.4 }}>
               {commit.message || '(no message)'}
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: selected ? 'var(--gray)' : 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               {i === 0 && (
-                <span style={{ color: 'var(--blue)', fontWeight: 700 }}>HEAD</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--blue)', background: 'rgba(26,86,255,0.12)', padding: '1px 5px' }}>HEAD</span>
               )}
-              <span>{formatRelativeDate(commit.created_at)}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: selected ? 'var(--gray)' : 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                @{author}
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: selected ? 'var(--gray)' : 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {formatRelativeDate(commit.created_at)}
+              </span>
             </div>
           </button>
         )

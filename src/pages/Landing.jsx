@@ -22,6 +22,7 @@ function DropCreator({ user }) {
   const [genre, setGenre] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [progress, setProgress] = useState('')
+  const [uploadedCount, setUploadedCount] = useState(0)
   const [error, setError] = useState('')
   const [recentProjects, setRecentProjects] = useState([])
 
@@ -39,7 +40,7 @@ function DropCreator({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!projectName.trim() || !files.length) return
-    setSubmitting(true); setError(''); setProgress('')
+    setSubmitting(true); setError(''); setProgress(''); setUploadedCount(0)
 
     try {
       // 1. Create project
@@ -70,6 +71,7 @@ function DropCreator({ user }) {
       for (let i = 0; i < files.length; i++) {
         setProgress(`Uploading stem ${i + 1} of ${files.length}`)
         await uploadStem(files[i], project.id, commit.id)
+        setUploadedCount(i + 1)
       }
       setProgress('Finalizing...')
 
@@ -78,7 +80,7 @@ function DropCreator({ user }) {
       console.error('[drop-create]', err)
       setError(err.message || 'Something went wrong')
       setSubmitting(false)
-      setProgress('')
+      setProgress(''); setUploadedCount(0)
     }
   }
 
@@ -155,16 +157,18 @@ function DropCreator({ user }) {
             <div style={{ border: '2px solid var(--black)', padding: '16px', background: '#fff' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '8px' }}>
                 <span>{progress || 'Creating project...'}</span>
-                <span>{files.length > 0 ? `${Math.min(files.length, Math.max(0, parseInt(progress) || 0))}/${files.length}` : ''}</span>
+                {files.length > 0 && uploadedCount > 0 && (
+                  <span>{uploadedCount}/{files.length}</span>
+                )}
               </div>
               <div style={{ height: '6px', background: 'var(--gray)', border: '1px solid var(--black)' }}>
                 <div style={{
                   height: '100%',
                   background: 'var(--blue)',
                   transition: 'width 0.3s ease',
-                  width: progress
-                    ? `${Math.round(((parseInt(progress.match(/\d+/) || [0])[0]) / files.length) * 100)}%`
-                    : '8%'
+                  width: files.length > 0 && uploadedCount > 0
+                    ? `${Math.round((uploadedCount / files.length) * 100)}%`
+                    : '8%',
                 }} />
               </div>
             </div>
@@ -232,8 +236,8 @@ function HeroLogin() {
           For Independent Producers
         </div>
 
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(72px, 12vw, 140px)', lineHeight: 0.88, letterSpacing: '2px', marginBottom: '20px' }}>
-          DEADW<span style={{ color: 'var(--blue)' }}>★</span>X
+        <h1 style={{ marginBottom: '20px', lineHeight: 1 }}>
+          <img src="/logo-black.png" alt="Deadwax" style={{ height: 'clamp(72px, 12vw, 140px)', width: 'auto', display: 'block' }} />
         </h1>
 
         {/* Secondary headline */}
