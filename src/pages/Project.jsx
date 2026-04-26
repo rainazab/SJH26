@@ -148,16 +148,9 @@ export function Project() {
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
             {/* Share / Sync */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
-              <Button variant="blue" onClick={shareLink}>
-                {shareStatus ? '✓ ' + shareStatus : '⬡ Share to Collab'}
-              </Button>
-              {!shareStatus && (
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  anyone with the link can contribute
-                </div>
-              )}
-            </div>
+            <Button variant="blue" onClick={shareLink}>
+              {shareStatus ? '✓ ' + shareStatus : 'Share'}
+            </Button>
             <Button variant="secondary" onClick={() => { setBranchName(''); setBranchOpen(true) }}>⑂ Branch</Button>
             <Link to={`/project/${id}/commit`}><Button variant="blue">+ Commit</Button></Link>
             <Link to={`/project/${id}/log`}><Button variant="secondary">Log</Button></Link>
@@ -177,8 +170,8 @@ export function Project() {
       </div>
 
       {/* Body */}
-      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '0', alignItems: 'start' }}>
-        <div style={{ borderRight: '2px solid var(--black)', paddingRight: '24px', marginRight: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '0', alignItems: 'start' }}>
+        <div style={{ borderRight: '2px solid var(--black)', paddingRight: '32px', marginRight: '32px' }}>
           <CommitTimeline
             commits={commits}
             selectedCommitId={activeCommitId}

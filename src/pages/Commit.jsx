@@ -54,17 +54,16 @@ export function Commit() {
         .select().single()
       if (ce) throw ce
 
-      // 4. Copy previous stems into the new commit
-      // IMPORTANT: uploaded_by must be user.id (current user) to pass RLS
+      // 4. Copy previous stems into the new commit, preserving original uploader
       if (prevStems.length) {
         setProgressLabel('Stacking previous stems...')
         const { error: copyError } = await supabase.from('stems').insert(
           prevStems.map(s => ({
             commit_id: commitRow.id,
             project_id: projectId,
-            uploaded_by: user.id, // ← must be current user for RLS
+            uploaded_by: s.uploaded_by,
             filename: s.filename,
-            storage_path: s.storage_path, // reuse same file, no re-upload needed
+            storage_path: s.storage_path,
             file_size_bytes: s.file_size_bytes,
           }))
         )

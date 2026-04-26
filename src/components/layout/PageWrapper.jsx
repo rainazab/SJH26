@@ -1,6 +1,6 @@
 export function PageWrapper({ children }) {
   return (
-    <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
+    <main style={{ maxWidth: '1600px', margin: '0 auto', padding: '32px 40px' }}>
       {children}
     </main>
   )

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useStems } from '../hooks/useStems'
 import { Button } from '../components/ui/Button'
@@ -404,6 +404,11 @@ function HeroLogin() {
 
 export function Landing() {
   const { user, loading } = useAuth()
-  if (loading) return null
-  return user ? <DropCreator user={user} /> : <HeroLogin />
+  if (loading) return (
+    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--gray-mid)', padding: '60px 0' }}>
+      Loading...
+    </div>
+  )
+  if (user) return <Navigate to="/dashboard" replace />
+  return <HeroLogin />
 }
