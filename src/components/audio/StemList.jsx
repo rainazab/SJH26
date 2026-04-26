@@ -41,6 +41,11 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
   const [duration, setDuration] = useState(0)
   const [readyIds, setReadyIds] = useState(new Set())
 
+  // Assign a color per unique contributor — same person always gets the same color
+  const contributorColors = {}
+  const uniqueUploaders = [...new Set(stems.map(s => s.uploaded_by))]
+  uniqueUploaders.forEach((uid, i) => { contributorColors[uid] = getColor(i) })
+
   // THIS is the fix: useEffect runs after the browser has painted the DOM.
   // By the time this runs, all the container divs from the render below
   // are guaranteed to exist in the real document tree.
@@ -55,14 +60,14 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
     setDuration(0)
     setPlaying(false)
 
-    stems.forEach((stem, i) => {
+    stems.forEach((stem) => {
       const url = urls[stem.id]
       const container = containerRefs.current[stem.id]
 
       // Both must exist — url might not be ready yet
       if (!url || !container) return
 
-      const color = getColor(i)
+      const color = contributorColors[stem.uploaded_by] || getColor(0)
 
       let ws
       try {
@@ -174,7 +179,7 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
 
       {/* Track rows — these render FIRST, then useEffect above inits WaveSurfer into them */}
       {stems.map((stem, i) => {
-        const color = getColor(i)
+        const color = contributorColors[stem.uploaded_by] || getColor(0)
         const profile = profiles[stem.uploaded_by]
         const author = profile?.display_name || profile?.username || 'unknown'
         return (
@@ -212,14 +217,14 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
         )
       })}
 
-      {/* Contributor legend */}
+      {/* Contributor legend — one entry per unique contributor */}
       <div style={{ borderTop: '1px solid #222', padding: '10px 20px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        {stems.map((stem, i) => {
-          const color = getColor(i)
-          const profile = profiles[stem.uploaded_by]
+        {uniqueUploaders.map((uid) => {
+          const color = contributorColors[uid] || getColor(0)
+          const profile = profiles[uid]
           const author = profile?.display_name || profile?.username || 'unknown'
           return (
-            <div key={stem.id} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div key={uid} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '10px', height: '10px', background: color.progress, flexShrink: 0 }} />
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 @{author}
@@ -350,7 +355,7 @@ export function StemList({ commitId }) {
         }
         setUrls(signed)
         setCommentsByStem(nextComments)
-        setViewMode(stemRows.length > 1 ? 'multi' : 'individual')
+        setViewMode('multi')
       } catch (e) {
         if (!cancelled) setError(e.message || 'Could not load stems')
       } finally {
