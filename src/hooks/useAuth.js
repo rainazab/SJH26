@@ -1,4 +1,4 @@
-import { createContext, createElement, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, createElement, useCallback, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -21,9 +21,10 @@ function useProvideAuth() {
   useEffect(() => {
     let mounted = true
 
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) console.error('[auth] getSession error:', error)
       if (mounted) {
-        setUser(data.session?.user ?? null)
+        setUser(data?.session?.user ?? null)
         setLoading(false)
       }
     })
@@ -39,18 +40,19 @@ function useProvideAuth() {
     }
   }, [])
 
-  const signInWithMagicLink = async (email) => {
-    const { error } = await supabase.auth.signInWithOtp({ email })
+  const signInWithMagicLink = useCallback(async (email) => {
+    const redirectTo = window.location.origin
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirectTo },
+    })
     if (error) throw error
-  }
+  }, [])
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-  }
+  }, [])
 
-  return useMemo(
-    () => ({ user, loading, signInWithMagicLink, signOut }),
-    [user, loading],
-  )
+  return { user, loading, signInWithMagicLink, signOut }
 }
