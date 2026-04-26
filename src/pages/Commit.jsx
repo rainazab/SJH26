@@ -24,14 +24,46 @@ export function Commit() {
     if (!user || !projectId) return
     setLoading(true); setError(''); setProgress(0)
     try {
-      const { data: commitRow, error: ce } = await supabase.from('commits').insert({
-        project_id: projectId, user_id: user.id, message: message.trim(),
-      }).select().single()
+      // Get the latest commit to carry forward its stems
+      const { data: prevCommits } = await supabase
+        .from('commits')
+        .select('id')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      const { data: commitRow, error: ce } = await supabase
+        .from('commits')
+        .insert({ project_id: projectId, user_id: user.id, message: message.trim() })
+        .select().single()
       if (ce) throw ce
+
+      // Carry forward stems from previous commit
+      if (prevCommits?.[0]) {
+        const { data: prevStems } = await supabase
+          .from('stems')
+          .select('*')
+          .eq('commit_id', prevCommits[0].id)
+        if (prevStems?.length) {
+          await supabase.from('stems').insert(
+            prevStems.map(s => ({
+              commit_id: commitRow.id,
+              project_id: projectId,
+              uploaded_by: s.uploaded_by,
+              filename: s.filename,
+              storage_path: s.storage_path,
+              file_size_bytes: s.file_size_bytes,
+            }))
+          )
+        }
+      }
+
+      // Upload new stems on top
       for (let i = 0; i < files.length; i++) {
         await uploadStem(files[i], projectId, commitRow.id)
         setProgress(Math.round(((i + 1) / files.length) * 100))
       }
+
       navigate(`/project/${projectId}`)
     } catch (err) {
       setError(err.message)

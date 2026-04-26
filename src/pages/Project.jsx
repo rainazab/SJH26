@@ -22,10 +22,6 @@ export function Project() {
   const [branchName, setBranchName] = useState('')
   const [shareStatus, setShareStatus] = useState('')
   const [creatingBranch, setCreatingBranch] = useState(false)
-  const [mergeOpen, setMergeOpen] = useState(false)
-  const [selectedMergeIds, setSelectedMergeIds] = useState([])
-  const [mergeMessage, setMergeMessage] = useState('')
-  const [merging, setMerging] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editBpm, setEditBpm] = useState('')
@@ -85,40 +81,6 @@ export function Project() {
     } catch (err) { setActionError(err.message); setCreatingBranch(false) }
   }
 
-  // FIX: set uploaded_by to current user (auth.uid()) not original uploader
-  const mergeCommits = async () => {
-    if (!user || selectedMergeIds.length < 2 || !mergeMessage.trim()) return
-    setMerging(true); setActionError('')
-    try {
-      const { data: newCommit, error: ce } = await supabase
-        .from('commits')
-        .insert({ project_id: id, user_id: user.id, message: mergeMessage.trim() })
-        .select().single()
-      if (ce) throw ce
-
-      const { data: stems, error: se } = await supabase
-        .from('stems').select('*').in('commit_id', selectedMergeIds)
-      if (se) throw se
-
-      if (stems?.length) {
-        const { error: ie } = await supabase.from('stems').insert(
-          stems.map(s => ({
-            commit_id: newCommit.id,
-            project_id: id,
-            uploaded_by: user.id, // ← THIS was the RLS bug. Must be current user.
-            filename: s.filename,
-            storage_path: s.storage_path,
-            file_size_bytes: s.file_size_bytes,
-          }))
-        )
-        if (ie) throw ie
-      }
-
-      setMergeOpen(false); setSelectedMergeIds([]); setMergeMessage(''); setMerging(false)
-      refetch()
-    } catch (err) { setActionError(err.message); setMerging(false) }
-  }
-
   const openEdit = () => {
     setEditName(project?.name || '')
     setEditBpm(project?.bpm?.toString() || '')
@@ -151,12 +113,6 @@ export function Project() {
       if (e) throw e
       navigate('/dashboard')
     } catch (err) { setActionError(err.message) }
-  }
-
-  const toggleMergeId = (commitId) => {
-    setSelectedMergeIds(prev =>
-      prev.includes(commitId) ? prev.filter(x => x !== commitId) : [...prev, commitId]
-    )
   }
 
   if (loading) return (
@@ -203,9 +159,6 @@ export function Project() {
               )}
             </div>
             <Button variant="secondary" onClick={() => { setBranchName(''); setBranchOpen(true) }}>⑂ Branch</Button>
-            {commits.length >= 2 && (
-              <Button variant="secondary" onClick={() => { setSelectedMergeIds([]); setMergeMessage(''); setMergeOpen(true) }}>⊕ Merge</Button>
-            )}
             <Link to={`/project/${id}/commit`}><Button variant="blue">+ Commit</Button></Link>
             <Link to={`/project/${id}/log`}><Button variant="secondary">Log</Button></Link>
             {isOwner && (
@@ -226,7 +179,13 @@ export function Project() {
       {/* Body */}
       <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '0', alignItems: 'start' }}>
         <div style={{ borderRight: '2px solid var(--black)', paddingRight: '24px', marginRight: '24px' }}>
-          <CommitTimeline commits={commits} selectedCommitId={activeCommitId} onSelectCommit={setSelectedCommitId} />
+          <CommitTimeline
+            commits={commits}
+            selectedCommitId={activeCommitId}
+            onSelectCommit={setSelectedCommitId}
+            projectOwnerId={project?.owner_id}
+            onCommitDeleted={refetch}
+          />
           <BranchTree projectId={id} branches={branches} />
         </div>
         <div>
@@ -256,42 +215,6 @@ export function Project() {
             </Button>
             <Button variant="secondary" onClick={() => setBranchOpen(false)}>Cancel</Button>
           </div>
-        </div>
-      </Modal>
-
-      {/* Merge modal */}
-      <Modal open={mergeOpen} onClose={() => setMergeOpen(false)} title="MERGE COMMITS">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            Select commits to merge — their stems will be combined
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', border: '2px solid var(--black)', maxHeight: '200px', overflowY: 'auto' }}>
-            {commits.map(c => (
-              <label key={c.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer', padding: '10px 12px', borderBottom: '1px solid var(--gray)', background: selectedMergeIds.includes(c.id) ? 'rgba(26,86,255,0.06)' : 'transparent' }}>
-                <input type="checkbox" checked={selectedMergeIds.includes(c.id)} onChange={() => toggleMergeId(c.id)}
-                  style={{ marginTop: '2px', accentColor: 'var(--blue)', cursor: 'pointer', flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>{c.message}</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', marginTop: '2px' }}>
-                    @{c.profile?.display_name || c.profile?.username || 'unknown'} · {new Date(c.created_at).toLocaleString()}
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
-          <Input value={mergeMessage} onChange={(e) => setMergeMessage(e.target.value)}
-            placeholder="Final mix — drums + bass + melody"
-            onKeyDown={(e) => { if (e.key === 'Enter' && selectedMergeIds.length >= 2 && mergeMessage.trim() && !merging) mergeCommits() }} />
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: selectedMergeIds.length >= 2 ? 'var(--blue)' : 'var(--gray-mid)' }}>
-            {selectedMergeIds.length < 2 ? `Select at least 2 commits (${selectedMergeIds.length} selected)` : `${selectedMergeIds.length} commits selected — stems will be pooled`}
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button variant="blue" onClick={mergeCommits} disabled={selectedMergeIds.length < 2 || !mergeMessage.trim() || merging}>
-              {merging ? 'Merging...' : 'Merge'}
-            </Button>
-            <Button variant="secondary" onClick={() => setMergeOpen(false)}>Cancel</Button>
-          </div>
-          {actionError && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--red)' }}>{actionError}</div>}
         </div>
       </Modal>
 

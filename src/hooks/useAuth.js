@@ -49,10 +49,20 @@ function useProvideAuth() {
     if (error) throw error
   }, [])
 
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    })
+    if (error) throw error
+  }, [])
+
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   }, [])
 
-  return { user, loading, signInWithMagicLink, signOut }
+  return { user, loading, signInWithMagicLink, signInWithGoogle, signOut }
 }
