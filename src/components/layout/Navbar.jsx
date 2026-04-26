@@ -41,11 +41,9 @@ export function Navbar() {
   return (
     <>
       <header style={{ borderBottom: '2px solid var(--black)', background: 'var(--black)' }}>
-        <nav style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '52px' }}>
-          <Link to={user ? '/dashboard' : '/'} style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '26px', color: '#f0ece2', letterSpacing: '3px', lineHeight: 1 }}>DEADW</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '26px', color: 'var(--blue)', letterSpacing: '0', lineHeight: 1 }}>★</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '26px', color: '#f0ece2', letterSpacing: '3px', lineHeight: 1 }}>X</span>
+        <nav style={{ padding: '0 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '52px', width: '100%', boxSizing: 'border-box' }}>
+          <Link to={user ? '/dashboard' : '/'} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img src="/logo.png" alt="Deadwax" style={{ height: '32px', width: 'auto', display: 'block' }} />
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
             {user ? (
