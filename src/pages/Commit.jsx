@@ -117,7 +117,7 @@ export function Commit() {
       </div>
 
       {step === 1 ? (
-        <div style={{ border: '2px solid var(--black)', padding: '24px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ border: '2px solid var(--black)', padding: '24px', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <Dropzone onFiles={setFiles} />
           {files.length > 0 && (
             <div style={{ borderTop: '2px solid var(--black)', paddingTop: '16px' }}>
@@ -142,7 +142,7 @@ export function Commit() {
           </Button>
         </div>
       ) : (
-        <div style={{ border: '2px solid var(--black)', padding: '24px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ border: '2px solid var(--black)', padding: '24px', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '8px' }}>
               Describe what you added

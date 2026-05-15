@@ -19,14 +19,7 @@ export function Dashboard() {
       const { data: owned, error: ownedErr } = await supabase
         .from('projects').select('*').eq('owner_id', user.id).order('created_at', { ascending: false })
       if (ownedErr) { setError(ownedErr.message); setLoading(false); return }
-      const { data: collabs } = await supabase.from('collaborators').select('project_id').eq('user_id', user.id)
-      const ids = (collabs || []).map(c => c.project_id)
-      if (!ids.length) { setProjects(owned || []); setLoading(false); return }
-      const { data: shared } = await supabase.from('projects').select('*').in('id', ids)
-      const merged = [...(owned || []), ...(shared || [])]
-      const unique = Array.from(new Map(merged.map(p => [p.id, p])).values())
-      unique.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      setProjects(unique)
+      setProjects(owned || [])
       setLoading(false)
     }
     load().catch(e => { setError(e.message); setLoading(false) })

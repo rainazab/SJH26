@@ -2,14 +2,17 @@
 @import 'tailwindcss';
 
 :root {
-  --cream: #f0ece2;
-  --black: #0a0a0a;
+  /* Dark mode — palette pulled from the waveform player */
+  --cream: #0a0a0a;        /* page background */
+  --black: #f0ece2;        /* primary ink + borders (was dark, now light) */
+  --surface: #141414;      /* cards, panels (was '#fff') */
+  --surface-2: #1a1a1a;    /* elevated emphasis (modal headers, etc.) */
+  --gray: #2a2a2a;         /* subtle dividers / borders */
+  --gray-mid: #8a8680;     /* muted text */
   --blue: #1a56ff;
   --blue-dark: #0030cc;
-  --gray: #c8c4ba;
-  --gray-mid: #8a8680;
   --red: #e02020;
-  --border: 2px solid #0a0a0a;
+  --border: 2px solid #f0ece2;
   --font-display: 'Bebas Neue', 'Arial Black', sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 }
@@ -30,10 +33,10 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.35;
+  opacity: 0.4;
 }
 
-::selection { background: var(--blue); color: white; }
+::selection { background: var(--blue); color: #fff; }

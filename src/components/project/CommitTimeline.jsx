@@ -35,7 +35,7 @@ export function CommitTimeline({ commits, selectedCommitId, onSelectCommit, proj
       </div>
       {commits.map((commit, i) => {
         const selected = selectedCommitId === commit.id
-        const author = commit.profile?.display_name || commit.profile?.username || 'unknown'
+        const author = commit.profile?.username || 'unknown'
         const isHead = i === 0
         return (
           <div

@@ -40,7 +40,7 @@ export function Navbar() {
 
   return (
     <>
-      <header style={{ borderBottom: '2px solid var(--black)', background: 'var(--black)' }}>
+      <header style={{ borderBottom: '2px solid var(--gray)', background: 'var(--surface-2)' }}>
         <nav style={{ padding: '0 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '52px', width: '100%', boxSizing: 'border-box' }}>
           <Link to={user ? '/dashboard' : '/'} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <img src="/logo.png" alt="Deadwax" style={{ height: '32px', width: 'auto', display: 'block' }} />
@@ -48,21 +48,18 @@ export function Navbar() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
             {user ? (
               <>
-                <Link to="/explore" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
-                  Explore
-                </Link>
-                <Link to="/profile" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
-                  Profile
-                </Link>
-                <Link to="/dashboard" style={{ color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
+                <Link to="/dashboard" style={{ color: 'var(--black)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
                   Dashboard
+                </Link>
+                <Link to="/profile" style={{ color: 'var(--black)', textTransform: 'uppercase', letterSpacing: '1px', textDecoration: 'none' }}>
+                  Profile
                 </Link>
                 <span style={{ color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '1px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.email}
                 </span>
                 <button
                   onClick={handleLogout}
-                  style={{ border: '1px solid #444', color: 'var(--gray)', background: 'transparent', padding: '4px 12px', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                  style={{ border: '1px solid var(--gray-mid)', color: 'var(--black)', background: 'transparent', padding: '4px 12px', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}
                 >
                   Sign Out
                 </button>
@@ -70,7 +67,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={() => setIsLoginOpen(true)}
-                style={{ border: '1px solid #444', color: 'var(--gray)', background: 'transparent', padding: '4px 12px', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                style={{ border: '1px solid var(--gray-mid)', color: 'var(--black)', background: 'transparent', padding: '4px 12px', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}
               >
                 Login
               </button>
@@ -95,7 +92,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={async () => { try { await signInWithGoogle() } catch (err) { setError(err.message) } }}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', padding: '10px 16px', background: '#fff', border: '2px solid var(--black)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', padding: '10px 16px', background: 'var(--surface-2)', color: 'var(--black)', border: '2px solid var(--black)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

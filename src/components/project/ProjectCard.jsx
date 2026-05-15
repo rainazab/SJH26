@@ -7,9 +7,9 @@ export function ProjectCard({ project }) {
   return (
     <Link
       to={`/project/${project.id}`}
-      style={{ display: 'block', padding: '20px', textDecoration: 'none', color: 'inherit', background: '#fff', transition: 'background 0.1s' }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--cream)' }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = '#fff' }}
+      style={{ display: 'block', padding: '20px', textDecoration: 'none', color: 'inherit', background: 'var(--surface)', transition: 'background 0.1s' }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--surface-2)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)' }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '14px' }}>
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', letterSpacing: '1px', lineHeight: 1, wordBreak: 'break-word' }}>

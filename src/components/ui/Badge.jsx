@@ -6,8 +6,8 @@ export function Badge({ children, blue = false }) {
       textTransform: 'uppercase',
       letterSpacing: '1px',
       padding: '2px 8px',
-      border: blue ? '1px solid #1a56ff' : '1px solid #0a0a0a',
-      color: blue ? '#1a56ff' : '#0a0a0a',
+      border: blue ? '1px solid #1a56ff' : '1px solid var(--black)',
+      color: blue ? '#1a56ff' : 'var(--black)',
       background: 'transparent',
       whiteSpace: 'nowrap',
     }}>

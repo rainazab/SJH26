@@ -31,11 +31,11 @@ export function OwnershipLog({ entries }) {
   )
 
   return (
-    <div style={{ border: '2px solid var(--black)', background: '#fff' }}>
+    <div style={{ border: '2px solid var(--black)', background: 'var(--surface)' }}>
       {/* Header */}
-      <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 200px 60px', borderBottom: '2px solid var(--black)', background: 'var(--black)', padding: '8px 16px', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr 200px 60px', borderBottom: '2px solid var(--black)', background: 'var(--surface-2)', padding: '8px 16px', gap: '16px' }}>
         {['', 'Event', 'Timestamp', '#'].map((h) => (
-          <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray)' }}>{h}</div>
+          <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)' }}>{h}</div>
         ))}
       </div>
 
@@ -49,7 +49,7 @@ export function OwnershipLog({ entries }) {
               alignItems: 'start', gap: '16px',
               borderBottom: i < entries.length - 1 ? '1px solid var(--gray)' : 'none',
               padding: '14px 16px',
-              background: i % 2 === 0 ? '#fff' : 'rgba(240,236,226,0.4)',
+              background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface-2)',
             }}
           >
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--blue)', paddingTop: '1px' }}>
@@ -66,7 +66,7 @@ export function OwnershipLog({ entries }) {
                 {formatRelativeDate(entry.created_at)}
               </div>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray)', paddingTop: '2px', textAlign: 'right' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', paddingTop: '2px', textAlign: 'right' }}>
               #{String(entries.length - i).padStart(4, '0')}
             </div>
           </div>

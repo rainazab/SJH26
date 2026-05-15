@@ -1,7 +1,11 @@
 import { useRef, useState } from 'react'
 
-const ACCEPTED_TYPES = new Set(['audio/wav', 'audio/mpeg', 'audio/flac', 'audio/x-aiff', 'audio/aiff', 'audio/mp3'])
-const ACCEPTED_EXT = /\.(wav|mp3|flac|aiff|aif)$/i
+const ACCEPTED_TYPES = new Set([
+  'audio/wav', 'audio/mpeg', 'audio/flac',
+  'audio/x-aiff', 'audio/aiff', 'audio/mp3',
+  'application/octet-stream',
+])
+const ACCEPTED_EXT = /\.(wav|mp3|flac|aiff|aif|als|alc|adg|adv|agr|asd)$/i
 
 export function Dropzone({ onFiles }) {
   const inputRef = useRef(null)
@@ -33,7 +37,7 @@ export function Dropzone({ onFiles }) {
         {dragging ? 'DROP IT' : 'DROP STEMS HERE'}
       </div>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)' }}>
-        .wav · .mp3 · .aiff · .flac
+        .wav · .mp3 · .aiff · .flac · .als · .alc · .adg
       </div>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', marginTop: '8px' }}>
         or click to browse
@@ -41,7 +45,7 @@ export function Dropzone({ onFiles }) {
       <input
         ref={inputRef}
         type="file"
-        accept=".wav,.mp3,.aiff,.aif,.flac,audio/*"
+        accept=".wav,.mp3,.aiff,.aif,.flac,.als,.alc,.adg,.adv,.agr,.asd,audio/*"
         multiple
         style={{ display: 'none' }}
         onChange={(e) => handleFiles(e.target.files)}

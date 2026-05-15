@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Navbar } from './components/layout/Navbar'
 import { PageWrapper } from './components/layout/PageWrapper'
+import { RequireUsername } from './components/layout/RequireUsername'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { Commit } from './pages/Commit'
 import { Dashboard } from './pages/Dashboard'
@@ -20,7 +21,7 @@ function ProtectedRoute({ children }) {
     </div>
   )
   if (!user) return <Navigate to="/" replace />
-  return children
+  return <RequireUsername>{children}</RequireUsername>
 }
 
 export default function App() {
@@ -31,7 +32,7 @@ export default function App() {
         <PageWrapper>
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/explore" element={<ProtectedRoute><Explore /></ProtectedRoute>} />
+            <Route path="/explore" element={<Explore />} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/new" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />

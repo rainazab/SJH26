@@ -29,6 +29,7 @@ export function NewProject() {
         owner_id: user.id,
         branch_name: 'main',
         invite_token: generateToken(),
+        is_private: true,
       }).select().single()
       if (err) throw err
       navigate(`/project/${data.id}`)
@@ -52,7 +53,7 @@ export function NewProject() {
 
       <form
         onSubmit={handleSubmit}
-        style={{ border: '2px solid var(--black)', padding: '28px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '16px' }}
+        style={{ border: '2px solid var(--black)', padding: '28px', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px' }}
       >
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '6px' }}>Project Name *</div>

@@ -3,7 +3,30 @@ import WaveSurfer from 'wavesurfer.js'
 import { useComments } from '../../hooks/useComments'
 import { useStems } from '../../hooks/useStems'
 import { supabase } from '../../lib/supabase'
+import { computeLanguageBar, getFileType } from '../../lib/fileColors'
 import { CommentMarker } from './CommentMarker'
+
+function LanguageBar({ filenames }) {
+  const bar = computeLanguageBar(filenames)
+  if (!bar.length) return null
+  return (
+    <div>
+      <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', gap: '2px' }}>
+        {bar.map(({ label, color, pct }) => (
+          <div key={label} style={{ background: color, width: `${pct}%`, minWidth: '4px' }} title={`${label} ${pct}%`} />
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap' }}>
+        {bar.map(({ label, color, pct }) => (
+          <span key={label} style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '5px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color, display: 'inline-block' }} />
+            {label} <span style={{ color: 'var(--gray-mid)' }}>{pct}%</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function formatTime(s) {
   if (!s || isNaN(s)) return '0:00'
@@ -177,7 +200,7 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
       {stems.map((stem, i) => {
         const color = getColor(i)
         const profile = profiles[stem.uploaded_by]
-        const author = profile?.display_name || profile?.username || 'unknown'
+        const author = profile?.username || 'unknown'
         return (
           <div
             key={stem.id}
@@ -194,8 +217,11 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
               display: 'flex', flexDirection: 'column', justifyContent: 'center',
               background: '#111',
             }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', color: color.progress, marginBottom: '3px', lineHeight: 1.2 }}>
-                {shortName(stem.filename)}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: getFileType(stem.filename).color, flexShrink: 0 }} title={getFileType(stem.filename).label} />
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', color: color.progress, lineHeight: 1.2 }}>
+                  {shortName(stem.filename)}
+                </div>
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: '#444', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 @{author}
@@ -218,7 +244,7 @@ function MultiTrackPlayer({ stems, urls, profiles }) {
         {stems.map((stem, i) => {
           const color = getColor(i)
           const profile = profiles[stem.uploaded_by]
-          const author = profile?.display_name || profile?.username || 'unknown'
+          const author = profile?.username || 'unknown'
           return (
             <div key={stem.id} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '10px', height: '10px', background: color.progress, flexShrink: 0 }} />
@@ -336,7 +362,7 @@ export function StemList({ commitId }) {
         const uploaderIds = [...new Set(stemRows.map(s => s.uploaded_by).filter(Boolean))]
         if (uploaderIds.length) {
           const { data: profileData } = await supabase
-            .from('profiles').select('id, username, display_name').in('id', uploaderIds)
+            .from('profiles').select('id, username').in('id', uploaderIds)
           const map = {}
           for (const p of profileData || []) map[p.id] = p
           if (!cancelled) setProfiles(map)
@@ -382,6 +408,8 @@ export function StemList({ commitId }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <LanguageBar filenames={stems.map(s => s.filename)} />
+
       {stems.length > 1 && (
         <div style={{ display: 'flex', border: '2px solid var(--black)', alignSelf: 'flex-start' }}>
           {[['multi', '⊕ Mix View'], ['individual', '≡ Tracks']].map(([mode, label]) => (
@@ -412,12 +440,13 @@ export function StemList({ commitId }) {
           {stems.map((stem, i) => {
             const color = getColor(i)
             const profile = profiles[stem.uploaded_by]
-            const author = profile?.display_name || profile?.username
+            const author = profile?.username
             return (
-              <div key={stem.id} style={{ border: '2px solid var(--black)', background: '#fff' }}>
-                <div style={{ borderBottom: `3px solid ${color.progress}`, padding: '8px 14px', background: 'var(--black)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: color.progress, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    ◈ {shortName(stem.filename)}
+              <div key={stem.id} style={{ border: '2px solid var(--black)', background: 'var(--surface)' }}>
+                <div style={{ borderBottom: `3px solid ${color.progress}`, padding: '8px 14px', background: 'var(--surface-2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: color.progress, textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: getFileType(stem.filename).color, flexShrink: 0 }} title={getFileType(stem.filename).label} />
+                    {shortName(stem.filename)}
                   </span>
                   {author && (
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: color.progress, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -431,7 +460,7 @@ export function StemList({ commitId }) {
                   />
                   <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
                     <input
-                      style={{ flex: 1, background: 'var(--cream)', border: '2px solid var(--black)', padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
+                      style={{ flex: 1, background: 'var(--surface-2)', color: 'var(--black)', border: '2px solid var(--black)', padding: '6px 10px', fontFamily: 'var(--font-mono)', fontSize: '12px', outline: 'none' }}
                       placeholder={pendingComment[stem.id]?.timeSeconds !== undefined ? `Note at ${Math.round(pendingComment[stem.id].timeSeconds)}s...` : 'Click waveform to select timestamp...'}
                       value={pendingComment[stem.id]?.content || ''}
                       onChange={(e) => setPendingComment(cur => ({ ...cur, [stem.id]: { ...(cur[stem.id] || {}), content: e.target.value } }))}

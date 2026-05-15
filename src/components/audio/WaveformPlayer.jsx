@@ -69,7 +69,7 @@ export function WaveformPlayer({ url, markers = [], onWaveformClick }) {
   }
 
   return (
-    <div style={{ border: '2px solid var(--black)', background: '#fff' }}>
+    <div style={{ border: '2px solid var(--black)', background: 'var(--surface)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px' }}>
         {/* Play/pause */}
         <button
@@ -123,7 +123,7 @@ export function WaveformPlayer({ url, markers = [], onWaveformClick }) {
 
         {/* Time */}
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-          {formatTime(currentTime)}<span style={{ color: 'var(--gray)' }}>/{formatTime(duration)}</span>
+          {formatTime(currentTime)}<span style={{ color: 'var(--gray-mid)' }}>/{formatTime(duration)}</span>
         </span>
       </div>
 

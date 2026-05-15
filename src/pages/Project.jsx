@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { StemList } from '../components/audio/StemList'
-import { BranchTree } from '../components/project/BranchTree'
 import { CommitTimeline } from '../components/project/CommitTimeline'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
@@ -10,18 +9,13 @@ import { Modal } from '../components/ui/Modal'
 import { useAuth } from '../hooks/useAuth'
 import { useProject } from '../hooks/useProject'
 import { supabase } from '../lib/supabase'
-import { generateToken } from '../lib/utils'
 
 export function Project() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { project, commits, branches, loading, error, refetch } = useProject(id)
+  const { project, commits, loading, error, refetch } = useProject(id)
   const [selectedCommitId, setSelectedCommitId] = useState(null)
-  const [branchOpen, setBranchOpen] = useState(false)
-  const [branchName, setBranchName] = useState('')
-  const [shareStatus, setShareStatus] = useState('')
-  const [creatingBranch, setCreatingBranch] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editBpm, setEditBpm] = useState('')
@@ -37,49 +31,6 @@ export function Project() {
   )
 
   const isOwner = user && project && user.id === project.owner_id
-
-  const shareLink = async () => {
-    if (!project?.invite_token) return
-    const url = `${window.location.origin}/invite/${project.invite_token}`
-    try {
-      await navigator.clipboard.writeText(url)
-      setShareStatus('Link copied!')
-    } catch {
-      setShareStatus(url) // fallback: show the URL
-    }
-    setTimeout(() => setShareStatus(''), 3000)
-  }
-
-  const createBranch = async () => {
-    if (!project || !user || !branchName.trim()) return
-    setCreatingBranch(true); setActionError('')
-    try {
-      const { data: nb, error: e } = await supabase.from('projects').insert({
-        name: project.name, bpm: project.bpm, key: project.key, genre: project.genre,
-        owner_id: user.id, parent_project_id: project.id,
-        branch_name: branchName.trim(), invite_token: generateToken(),
-      }).select().single()
-      if (e) throw e
-
-      if (commits[0]) {
-        const { data: sc, error: ce } = await supabase.from('commits').insert({
-          project_id: nb.id, user_id: user.id,
-          message: `Branched from main — ${branchName.trim()}`,
-        }).select().single()
-        if (ce) throw ce
-        const { data: oldStems } = await supabase.from('stems').select('*').eq('commit_id', commits[0].id)
-        if (oldStems?.length) {
-          await supabase.from('stems').insert(oldStems.map(s => ({
-            commit_id: sc.id, project_id: nb.id, uploaded_by: user.id,
-            filename: s.filename, storage_path: s.storage_path,
-            file_size_bytes: s.file_size_bytes,
-          })))
-        }
-      }
-      setBranchOpen(false); setBranchName(''); setCreatingBranch(false)
-      navigate(`/project/${nb.id}`)
-    } catch (err) { setActionError(err.message); setCreatingBranch(false) }
-  }
 
   const openEdit = () => {
     setEditName(project?.name || '')
@@ -147,11 +98,6 @@ export function Project() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-            {/* Share / Sync */}
-            <Button variant="blue" onClick={shareLink}>
-              {shareStatus ? '✓ ' + shareStatus : 'Share'}
-            </Button>
-            <Button variant="secondary" onClick={() => { setBranchName(''); setBranchOpen(true) }}>⑂ Branch</Button>
             <Link to={`/project/${id}/commit`}><Button variant="blue">+ Commit</Button></Link>
             <Link to={`/project/${id}/log`}><Button variant="secondary">Log</Button></Link>
             {isOwner && (
@@ -179,7 +125,6 @@ export function Project() {
             projectOwnerId={project?.owner_id}
             onCommitDeleted={refetch}
           />
-          <BranchTree projectId={id} branches={branches} />
         </div>
         <div>
           {activeCommitId ? (
@@ -193,23 +138,6 @@ export function Project() {
           )}
         </div>
       </div>
-
-      {/* Branch modal */}
-      <Modal open={branchOpen} onClose={() => setBranchOpen(false)} title="CREATE BRANCH">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            Fork this project into a new direction
-          </div>
-          <Input value={branchName} onChange={(e) => setBranchName(e.target.value)} placeholder="lo-fi version, trap remix..." autoFocus
-            onKeyDown={(e) => { if (e.key === 'Enter' && branchName.trim() && !creatingBranch) createBranch() }} />
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Button variant="blue" onClick={createBranch} disabled={!branchName.trim() || creatingBranch}>
-              {creatingBranch ? 'Creating...' : 'Create Branch'}
-            </Button>
-            <Button variant="secondary" onClick={() => setBranchOpen(false)}>Cancel</Button>
-          </div>
-        </div>
-      </Modal>
 
       {/* Edit modal */}
       <Modal open={editOpen} onClose={() => setEditOpen(false)} title="EDIT PROJECT">

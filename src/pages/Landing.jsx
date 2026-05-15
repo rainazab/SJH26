@@ -54,6 +54,7 @@ function DropCreator({ user }) {
           owner_id: user.id,
           branch_name: 'main',
           invite_token: generateToken(),
+          is_private: true,
         })
         .select()
         .single()
@@ -103,9 +104,9 @@ function DropCreator({ user }) {
 
           {/* File list */}
           {files.length > 0 && (
-            <div style={{ border: '2px solid var(--black)', background: '#fff' }}>
-              <div style={{ borderBottom: '2px solid var(--black)', padding: '8px 14px', background: 'var(--black)' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--cream)' }}>
+            <div style={{ border: '2px solid var(--black)', background: 'var(--surface)' }}>
+              <div style={{ borderBottom: '2px solid var(--black)', padding: '8px 14px', background: 'var(--surface-2)' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--black)' }}>
                   {files.length} file{files.length !== 1 ? 's' : ''} queued
                 </span>
               </div>
@@ -124,7 +125,7 @@ function DropCreator({ user }) {
           )}
 
           {/* Project metadata */}
-          <div style={{ border: '2px solid var(--black)', padding: '20px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ border: '2px solid var(--black)', padding: '20px', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '6px' }}>
                 Project Name *
@@ -154,7 +155,7 @@ function DropCreator({ user }) {
 
           {/* Progress */}
           {submitting && (
-            <div style={{ border: '2px solid var(--black)', padding: '16px', background: '#fff' }}>
+            <div style={{ border: '2px solid var(--black)', padding: '16px', background: 'var(--surface)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--gray-mid)', marginBottom: '8px' }}>
                 <span>{progress || 'Creating project...'}</span>
                 {files.length > 0 && uploadedCount > 0 && (
@@ -239,7 +240,7 @@ function HeroLogin() {
         </div>
 
         <h1 style={{ marginBottom: '20px', lineHeight: 1 }}>
-          <img src="/logo-black.png" alt="Deadwax" style={{ height: 'clamp(72px, 12vw, 140px)', width: 'auto', display: 'block' }} />
+          <img src="/logo.png" alt="Deadwax" style={{ height: 'clamp(72px, 12vw, 140px)', width: 'auto', display: 'block' }} />
         </h1>
 
         {/* Secondary headline */}
@@ -253,7 +254,7 @@ function HeroLogin() {
         {/* Problem statement */}
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', maxWidth: '600px', lineHeight: 1.8, marginBottom: '40px', color: 'var(--black)' }}>
           The beat drops. The collab claims it. You have nothing but a DM thread and a{' '}
-          <span style={{ background: 'var(--black)', color: 'var(--cream)', padding: '1px 6px' }}>final_FINAL_v3.wav</span>
+          <span style={{ background: 'var(--surface-2)', color: 'var(--black)', padding: '1px 6px', border: '1px solid var(--gray)' }}>final_FINAL_v3.wav</span>
           {' '}nobody can trace back to you.
           <br /><br />
           Independent producers lose credit, get locked into expensive platforms, and have no
@@ -262,7 +263,7 @@ function HeroLogin() {
         </p>
 
         {/* Manifesto bar */}
-        <div style={{ background: 'var(--black)', color: 'var(--cream)', padding: '20px 28px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', border: '2px solid var(--black)' }}>
+        <div style={{ background: 'var(--surface-2)', color: 'var(--black)', padding: '20px 28px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', border: '2px solid var(--black)' }}>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(18px, 2.5vw, 26px)', letterSpacing: '2px', lineHeight: 1 }}>
             BUILT FOR PRODUCERS. NOT PLATFORMS.
           </span>
@@ -300,7 +301,7 @@ function HeroLogin() {
               style={{
                 padding: '24px 20px',
                 borderRight: i < 3 ? '2px solid var(--black)' : 'none',
-                background: i % 2 === 0 ? '#fff' : 'var(--cream)',
+                background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface-2)',
               }}
             >
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--gray-mid)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>{f.num}</div>
@@ -323,7 +324,7 @@ function HeroLogin() {
                 padding: '14px 20px',
                 borderRight: i < 2 ? '2px solid var(--black)' : 'none',
                 display: 'flex', alignItems: 'center', gap: '12px',
-                background: '#fff',
+                background: 'var(--surface)',
               }}
             >
               <span style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'var(--blue)', flexShrink: 0 }}>{s.icon}</span>
@@ -346,12 +347,12 @@ function HeroLogin() {
         </div>
         <form
           onSubmit={handleLogin}
-          style={{ border: '2px solid var(--black)', padding: '24px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '12px' }}
+          style={{ border: '2px solid var(--black)', padding: '24px', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '12px' }}
         >
           <button
             type="button"
             onClick={async () => { try { await signInWithGoogle() } catch (err) { setError(err.message) } }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', padding: '10px 16px', background: '#fff', border: '2px solid var(--black)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', width: '100%', padding: '10px 16px', background: 'var(--surface-2)', color: 'var(--black)', border: '2px solid var(--black)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

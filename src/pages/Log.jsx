@@ -15,11 +15,10 @@ export function Log() {
     async function load() {
       setLoading(true); setError('')
       try {
-        const [projRes, commitsRes, stemsRes, collabsRes, commentsRes] = await Promise.all([
+        const [projRes, commitsRes, stemsRes, commentsRes] = await Promise.all([
           supabase.from('projects').select('name').eq('id', projectId).single(),
           supabase.from('commits').select('*').eq('project_id', projectId),
           supabase.from('stems').select('*').eq('project_id', projectId),
-          supabase.from('collaborators').select('*').eq('project_id', projectId),
           supabase.from('comments').select('*, stems!inner(project_id, filename)').eq('stems.project_id', projectId),
         ])
         if (projRes.data) setProjectName(projRes.data.name)
@@ -33,11 +32,6 @@ export function Log() {
             id: `stem-${s.id}`,
             text: `Stem uploaded — ${s.filename}`,
             created_at: s.created_at,
-          })),
-          ...(collabsRes.data || []).map(c => ({
-            id: `collab-${c.id}`,
-            text: `Collaborator joined as ${c.role}`,
-            created_at: c.joined_at,
           })),
           ...(commentsRes.data || []).map(c => ({
             id: `comment-${c.id}`,
